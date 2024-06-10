@@ -1,6 +1,6 @@
 From python:3.9-slim
 
-WORKDIR C:\ProgramData\Jenkins\.jenkins\workspace\Selenium_JOB_working
+WORKDIR C:\ProgramData\Jenkins\.jenkins\workspace\SelJenkins
 
 ARG USERNAME
 ARG PASSWORD
