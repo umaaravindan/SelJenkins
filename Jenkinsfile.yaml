@@ -9,7 +9,7 @@ pipeline:
     - stage: Checkout
       steps:
         - echo: 'Checking out the repository...'
-        - git: 'https://github.com/umaaravindan/Selenium_Trial.git'
+        - git: 'https://github.com/umaaravindan/SelJenkins.git'
         - echo: 'Repository checked out.'
 
     - stage: Build Docker Image
