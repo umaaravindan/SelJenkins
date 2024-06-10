@@ -8,9 +8,9 @@ pipeline:
   stages:
     - stage: Checkout
       steps:
-        - echo: 'Checking out the repository...'
-        - git: 'https://github.com/umaaravindan/SelJenkins.git'
-        - echo: 'Repository checked out.'
+        - echo 'Checking out the repository...'
+        - git 'https://github.com/umaaravindan/SelJenkins.git'
+        - echo 'Repository checked out.'
 
     - stage: Build Docker Image
       steps:
@@ -31,6 +31,8 @@ pipeline:
 
   post:
     success:
-      echo: 'Pipeline completed successfully.'
+      steps:
+        - echo 'Pipeline completed successfully.'
     failure:
-      echo: 'Pipeline failed.'
+      steps:
+        - echo 'Pipeline failed.'
