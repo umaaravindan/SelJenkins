@@ -3,7 +3,7 @@ pipeline:
 
   environment:
     DOCKER_IMAGE: 'chatlearning123/getting-started/umadocker:latest'
-    DOCKER_CREDENTIALS_ID: 'dockerhub-credentials'  # Replace with your actual Docker Hub credentials ID
+    DOCKER_CREDENTIALS_ID: 'GIT_ID'  # Replace with your actual Docker Hub credentials ID
 
   stages:
     - stage: Checkout
