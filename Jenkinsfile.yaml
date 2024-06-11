@@ -10,7 +10,7 @@ pipeline:
         - sh "docker --version"
     - stage: "Jenkins YAML Maven Build"
       steps:
-        - git "https://github.com/learn-devops-fast/rock-paper-scissors.git"
+        - git "https://github.com/umaaravindan/SelJenkins.git"
         - sh "mvn clean compile test install"
     - stage: "Final Jenkins YAML Pipeline Stage"
       steps:
