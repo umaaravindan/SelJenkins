@@ -2,12 +2,12 @@
 pipeline {
     agent none
    stages {     
-    stage('Maven Install') {
-      agent {         
-       docker {          
-         image 'SelJenkins'         
-     }       
-  }       
-       }
+    stage('Build-Docker-Image') {
+      steps {
+        container('docker') {
+          sh 'docker build -t SelJenkins:latest .'
+        }
+      }
+    }
    }
  }
