@@ -1,25 +1,51 @@
 pipeline {
     agent any
+
     environment {
+        IMAGE_NAME = 'chatlearning123/getting-started'
+        IMAGE_TAG = 'latest'
         DOCKER_HUB_CREDENTIALS = credentials('your-credentials-id')
     }
+
     stages {
+        stage('Cleanup') {
+            steps {
+                cleanWs()
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                // Checkout your code from version control
+                git 'https://github.com/umaaravindan/SelJenkins.git'
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
+                    // Build the Docker image
+                    sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
+                }
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                script {
+                    // Log in to Docker Hub
                     sh '''
-                    docker build -t chatlearning123/getting-started:latest .
+                    echo $DOCKER_HUB_CREDENTIALS_PSW | docker login --username $DOCKER_HUB_CREDENTIALS_USR --password-stdin
                     '''
                 }
             }
         }
+
         stage('Push Docker Image') {
             steps {
                 script {
-                    sh '''
-                    echo $DOCKER_HUB_CREDENTIALS_PSW | docker login --username $DOCKER_HUB_CREDENTIALS_USR --password-stdin
-                    docker push chatlearning123/getting-started:latest
-                    '''
+                    // Push the Docker image to the repository
+                    sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
                 }
             }
         }
