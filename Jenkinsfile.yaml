@@ -1,28 +1,61 @@
 pipeline {
-    environment {
-        USERNAME = 'chatlearning123'
-        PASSWORD = '1234567890'
-        REPOSITORY = 'chatlearning123/getting-started'
-        TAG = 'latest'
-    }
     agent any
+
+    environment {
+        IMAGE_NAME = 'chatlearning123/getting-started'
+        IMAGE_TAG = 'latest'
+    }
+
     stages {
-        stage('Build') {
+        stage('Checkout') {
+            steps {
+                // Checkout your code from version control
+                git 'https://github.com/your-repo.git'
+            }
+        }
+
+        stage('Build Docker Image') {
             steps {
                 script {
-                    sh '''
-                    docker build \
-                        --build-arg USERNAME=${USERNAME} \
-                        --build-arg PASSWORD=${PASSWORD} \
-                        --build-arg TAG=${TAG} \
-                        -t ${REPOSITORY}:latest .
+                    // Build the Docker image
+                    sh """
+                    docker build --build-arg USERNAME=${env.DOCKER_USERNAME} --build-arg PASSWORD=${env.DOCKER_PASSWORD} --build-arg TAG=${env.IMAGE_TAG} -t ${env.IMAGE_NAME}:${env.IMAGE_TAG} .
+                    """
+                }
+            }
+        }
 
-                    echo ${PASSWORD} | docker login --username ${USERNAME} --password-stdin
+        stage('Login to Docker Hub') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        // Log in to Docker Hub
+                        sh """
+                        echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USERNAME} --password-stdin
+                        """
+                    }
+                }
+            }
+        }
 
-                    docker tag ${REPOSITORY}:latest ${REPOSITORY}:${TAG}
+        stage('Tag Docker Image') {
+            steps {
+                script {
+                    // Tag the Docker image
+                    sh """
+                    docker tag ${env.IMAGE_NAME}:${env.IMAGE_TAG} ${env.IMAGE_NAME}:${env.IMAGE_TAG}
+                    """
+                }
+            }
+        }
 
-                    docker push ${REPOSITORY}:${TAG}
-                    '''
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    // Push the Docker image to the repository
+                    sh """
+                    docker push ${env.IMAGE_NAME}:${env.IMAGE_TAG}
+                    """
                 }
             }
         }
