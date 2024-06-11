@@ -10,7 +10,7 @@ ARG REPOSITORY
 ENV USERNAME=chatlearning123
 ENV PASSWORD=1234567890
 ENV REPOSITORY=https://hub.docker.com/repository/docker/chatlearning123/getting-started
-ENV TAG=latest -t chatlearning123/getting-started:latest
+ENV TAG=chatlearning123/getting-started:latest
 
 COPY AmazonLogin.py .
 COPY Input.csv .
