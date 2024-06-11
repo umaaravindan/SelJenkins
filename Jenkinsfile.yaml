@@ -1,63 +1,33 @@
-pipeline {
-    agent any
+pipeline:
+  agent: any
+  environment:
+    IMAGE_NAME: 'chatlearning123/getting-started'
+    IMAGE_TAG: 'latest'
 
-    environment {
-        IMAGE_NAME = 'chatlearning123/getting-started'
-        IMAGE_TAG = 'latest'
-    }
+  stages:
+    - stage: Checkout
+      steps:
+        - script: |
+            git 'https://github.com/umaaravindan/SelJenkins.git'
 
-    stages {
-        stage('Checkout') {
-            steps {
-                // Checkout your code from version control
-                git 'https://github.com/umaaravindan/SelJenkins.git'
+    - stage: Build Docker Image
+      steps:
+        - script: |
+            docker build --build-arg USERNAME=chatlearning123 --build-arg PASSWORD=1234567890 --build-arg TAG=latest -t ${IMAGE_NAME}:${IMAGE_TAG} .
+
+    - stage: Login to Docker Hub
+      steps:
+        - script: |
+            withCredentials([usernamePassword(credentialsId: 'DOCKER_CRED', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+              sh 'echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USERNAME} --password-stdin'
             }
-        }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    // Build the Docker image
-                    sh """
-                    docker build --build-arg USERNAME=chatlearning123 --build-arg PASSWORD=1234567890 --build-arg TAG=latest -t ${IMAGE_NAME}:${IMAGE_TAG} .
-                    """
-                }
-            }
-        }
+    - stage: Tag Docker Image
+      steps:
+        - script: |
+            docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:${IMAGE_TAG}
 
-        stage('Login to Docker Hub') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'DOCKER_CRED', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                        // Log in to Docker Hub
-                        sh """
-                        echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USERNAME} --password-stdin
-                        """
-                    }
-                }
-            }
-        }
-
-        stage('Tag Docker Image') {
-            steps {
-                script {
-                    // Tag the Docker image
-                    sh """
-                    docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:${IMAGE_TAG}
-                    """
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    // Push the Docker image to the repository
-                    sh """
-                    docker push ${IMAGE_NAME}:${IMAGE_TAG}
-                    """
-                }
-            }
-        }
-    }
-}
+    - stage: Push Docker Image
+      steps:
+        - script: |
+            docker push ${IMAGE_NAME}:${IMAGE_TAG}
