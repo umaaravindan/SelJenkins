@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'chatlearning123/getting-started'
         IMAGE_TAG = 'latest'
-        DOCKER_HUB_CREDENTIALS = credentials('your-credentials-id')
+        DOCKER_HUB_CREDENTIALS = credentials('DOCKER_CRED')
     }
 
     stages {
