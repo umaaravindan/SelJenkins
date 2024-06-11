@@ -28,10 +28,10 @@ pipeline {
         stage('Login to Docker Hub') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'DOCKER_CRED', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    withCredentials([usernamePassword(credentialsId: 'DOCKER_CRED', passwordVariable: '1234567890', usernameVariable: 'chatlearning123')]) {
                         // Log in to Docker Hub
                         sh """
-                        echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USERNAME} --password-stdin
+                        echo 1234567890 | docker login --username chatlearning123 --password-stdin
                         """
                     }
                 }
@@ -43,7 +43,7 @@ pipeline {
                 script {
                     // Tag the Docker image
                     sh """
-                    docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:${IMAGE_TAG}
+                    docker tag latest:latest ${IMAGE_NAME}:${IMAGE_TAG}
                     """
                 }
             }
