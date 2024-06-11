@@ -1,17 +1,30 @@
-pipeline:
-  agent:
-    any:
-  stages:
-    - stage: "Log Jenkins Maven Docker Java and Git versions"
-      steps:
-        - sh "mvn -version"
-        - sh "java -version"
-        - sh "git --version"
-        - sh "docker --version"
-    - stage: "Jenkins YAML Maven Build"
-      steps:
-        - git "https://github.com/umaaravindan/SelJenkins.git"
-        - sh "mvn clean compile test install"
-    - stage: "Final Jenkins YAML Pipeline Stage"
-      steps:
-        - sh "echo 'Jenkins YAML Pipeline Complete'"
+pipeline {
+    environment {
+        USERNAME = 'chatlearning123'
+        PASSWORD = '1234567890'
+        REPOSITORY = 'chatlearning123/getting-started'
+        TAG = 'latest'
+    }
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                script {
+                    sh '''
+                    docker build \
+                        --build-arg USERNAME=${USERNAME} \
+                        --build-arg PASSWORD=${PASSWORD} \
+                        --build-arg TAG=${TAG} \
+                        -t ${REPOSITORY}:latest .
+
+                    echo ${PASSWORD} | docker login --username ${USERNAME} --password-stdin
+
+                    docker tag ${REPOSITORY}:latest ${REPOSITORY}:${TAG}
+
+                    docker push ${REPOSITORY}:${TAG}
+                    '''
+                }
+            }
+        }
+    }
+}
