@@ -19,7 +19,7 @@ pipeline {
                 script {
                     // Build the Docker image
                     sh """
-                    docker build --build-arg USERNAME=chatlearning123 --build-arg PASSWORD=1234567890 --build-arg TAG=latest:latest -t chatlearning123/getting-started:latest .
+                    docker build --build-arg USERNAME=chatlearning123 --build-arg PASSWORD=1234567890 --build-arg TAG=latest -t ${IMAGE_NAME}:${IMAGE_TAG} .
                     """
                 }
             }
@@ -28,10 +28,10 @@ pipeline {
         stage('Login to Docker Hub') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'DOCKER_CRED', passwordVariable: '1234567890', usernameVariable: 'chatlearning123')]) {
+                    withCredentials([usernamePassword(credentialsId: 'DOCKER_CRED', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                         // Log in to Docker Hub
                         sh """
-                        echo 1234567890 | docker login --username chatlearning123 --password-stdin
+                        echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USERNAME} --password-stdin
                         """
                     }
                 }
@@ -43,7 +43,7 @@ pipeline {
                 script {
                     // Tag the Docker image
                     sh """
-                    docker tag latest:latest chatlearning123/getting-started:latest
+                    docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:${IMAGE_TAG}
                     """
                 }
             }
@@ -54,7 +54,7 @@ pipeline {
                 script {
                     // Push the Docker image to the repository
                     sh """
-                    docker push chatlearning123/getting-started:latest
+                    docker push ${IMAGE_NAME}:${IMAGE_TAG}
                     """
                 }
             }
