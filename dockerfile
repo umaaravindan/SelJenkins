@@ -1,6 +1,6 @@
-From python:3.9-slim
+TAG=latest -t chatlearning123/getting-started:latestFrom python:3.9-slim
 
-WORKDIR C:\ProgramData\Jenkins\.jenkins\workspace\SelJenkins
+WORKDIR C:\ProgramData\Jenkins\.jenkins\workspace\Selenium_JOB_working
 
 ARG USERNAME
 ARG PASSWORD
@@ -10,6 +10,7 @@ ARG REPOSITORY
 ENV USERNAME=chatlearning123
 ENV PASSWORD=1234567890
 ENV REPOSITORY=https://hub.docker.com/repository/docker/chatlearning123/getting-started
+ENV TAG=latest -t chatlearning123/getting-started:latest
 
 COPY AmazonLogin.py .
 COPY Input.csv .
