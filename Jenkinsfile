@@ -1,27 +1,32 @@
 pipeline {
     agent any
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('your-credentials-id')
+        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
+        DOCKER_IMAGE = 'chatlearning123/getting-started:latest'
     }
     stages {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh '''
-                    docker build -t chatlearning123/getting-started:latest .
-                    '''
+                    dockerImage = docker.build("${env.DOCKER_IMAGE}", ".")
                 }
             }
         }
         stage('Push Docker Image') {
             steps {
                 script {
-                    sh '''
-                    echo $DOCKER_HUB_CREDENTIALS_PSW | docker login --username $DOCKER_HUB_CREDENTIALS_USR --password-stdin
-                    docker push chatlearning123/getting-started:latest
-                    '''
+                    withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                        dockerImage.push()
+                        sh 'docker logout'
+                    }
                 }
             }
+        }
+    }
+    post {
+        always {
+            cleanWs()
         }
     }
 }
