@@ -14,6 +14,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git 'https://github.com/umaaravindan/SelJenkins.git'
+                echo 'GIT CHEKPOUT DONE'
             }
         }
         
