@@ -1,32 +1,15 @@
-pipeline {
-    agent {
-        docker {
-            image 'dokceruma'
-            label 'AGENT1'
-            args '-v /root/.m2:/root/.m2'
-        }
-    }
-    environment {
-        DOCKER_REGISTRY = 'docker.io'
-        DOCKER_REPO = 'chatlearning123/getting-started'
-    }
-    stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/umaaravindan/SelJenkins.git'
-                echo 'GIT CHEKPOUT DONE'
-            }
-        }
-        
-        stage('Build Docker Image') {
+stage('Build-push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry("https://${DOCKER_REGISTRY}", 'dockerhub-credentials') {
-                        def app = docker.build("${DOCKER_REPO}:${env.BUILD_ID}")
-                        app.push()
+                    checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'GIT_CREDENTIALS', url: 'https://github.com/umaaravindan/Selenium_Trial.git']])
+                    def dockerfile = 'Dockerfile'
+                    def imageTag = "martinmartin234/vuejs-foot" 
+                    def customImage = docker.build(imageTag, "-f ${dockerfile} ./")
+                    
+                    docker.withRegistry('', 'dockercon') {
+                        customImage.push()
                     }
                 }
             }
         }
-    }
-}
+Merci le s
