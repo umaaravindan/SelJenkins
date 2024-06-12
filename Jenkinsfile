@@ -12,4 +12,4 @@ stage('Build-push Docker Image') {
                 }
             }
         }
-Merci le s
+
