@@ -1,32 +1,35 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.6.3-jdk-8'
+            label 'docker-agent'
+            args '-v /root/.m2:/root/.m2'
+        }
+    }
     environment {
-        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
-        DOCKER_IMAGE = 'chatlearning123/getting-started:latest'
+        DOCKER_REGISTRY = 'docker.io'
+        DOCKER_REPO = 'chatlearning123/getting-started'
     }
     stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/your-repo.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${env.DOCKER_IMAGE}", ".")
-                }
-            }
-        }
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                        dockerImage.push()
-                        sh 'docker logout'
+                    docker.withRegistry("https://${DOCKER_REGISTRY}", 'dockerhub-credentials') {
+                        def app = docker.build("${DOCKER_REPO}:${env.BUILD_ID}")
+                        app.push()
                     }
                 }
             }
-        }
-    }
-    post {
-        always {
-            cleanWs()
         }
     }
 }
