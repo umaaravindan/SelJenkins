@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'dokceruma'
-            label 'docker-agent'
+            label 'AGENT1'
             args '-v /root/.m2:/root/.m2'
         }
     }
